@@ -1,0 +1,223 @@
+---
+layout: default
+
+---
+
+{% if page.description %}
+<meta name="description" content="{{ page.description }}" />
+{% else %}
+<meta name="description" content="HelloABQ! Albuquerque, New Mexico - Spreading Albuquerque pride one shirt at a time" />
+{% endif %}
+{% if page.keywords %}
+<meta name="keywords" content="{{ page.keywords }}" />
+{% else %}
+<meta name="keywords" content="albuquerque, new mexico, abq, clothing, t-shirts, shirts, printing, stickers, decals, nm, merchandise, merch, albert lozoya" />
+{% endif %}
+
+<div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">{{ page.prodtitle }}</h1>
+  </header>
+
+  <article class="post-content">
+    <div class="product-group">
+
+        <div class="product-left">
+            <img src="{{ page.prodimg }}" alt="{{ page.prodtitle }}" />{% include sections/social-links.html %} 
+        </div>
+
+
+        <div class="product-right">
+        <p>
+		{{ content }}
+		{{ page.proddescription }}<br><br><span style="color:#789;"><em>Item Number: {{ page.prodnumber }}</em></span> 
+        </p>
+        </div>
+
+        
+{% if page.outofstock %}  
+<div class="product-right">
+<p><span style="text-transform: uppercase; color: #ea0000; ">OUT OF STOCK</span><br>
+This item is not currently available.</p>
+</div>
+
+{% else %}
+<div class="product-right">
+<p>
+    <!-- stripe product begin -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script type="text/javascript" src="//checkout.stripe.com/checkout.js"></script>
+    <div id="checkout" style="border: 1px #cccccc solid; margin: 10px; padding: 10px; text-align:left;">
+    <a name="checkout"></a>
+    
+{% if page.chartimg %}
+<img src="{{ page.chartimg }}" alt="{{ page.prodtitle }}" align="right" />
+{% endif %}
+
+    <h3>${{ page.price }}.00</h3>
+
+
+    <div style="padding-bottom: 15px;">
+    Size:
+    <select data-shirtSize="selectShirtSize" name="shirtSize">
+      <option value="Size: Small Black T-shirt">Small</option>
+      <option value="Size: Medium Black T-shirt">Medium</option>
+      <option value="Size: Large Black T-shirt">Large</option>
+      <option value="Size: X-Large Black T-shirt" selected>X-Large</option>
+    </select>
+    </div>
+
+    <div style="padding-bottom: 15px;">
+    Qty:
+    <select data-button="customButton1" name="quantity">
+      <option value="1" selected>1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+    </select>
+    </div>
+
+    <div style="padding-bottom: 15px;">
+    <button id="customButton1" class="button checkout-button btn btn-success" data-amount="{{ page.price }}00" data-description="{{ page.prodtitle }}">Buy Now!</button>
+    </div>
+
+
+    </div>
+</p>
+
+
+    <script>
+      bowtie.config.get(function(env){
+        if(!env.stripe.publishable_key){
+          console.error("Stripe not connected to this BowTie Project Environment");
+          return;
+        }
+
+        var handler = StripeCheckout.configure({
+          // Add your Stripe live publishable key here.
+          key: env.stripe.publishable_key,
+          image: 'https://stripe.com/img/documentation/checkout/marketplace.png',
+          locale: 'auto',
+    	    shippingAddress: true,
+          token: function(token, args) {
+            // Use the token to create the charge with a server-side script.
+            // You can access the token ID with `token.id`
+            bowtie.user.purchase('{{ page.product_id }}', {
+              stripe_credit_card_token: token.id,
+              billing: {
+               address_line1: args.billing_address_line1,
+               address_city:  args.billing_address_city,
+               address_state: args.billing_address_state,
+               address_zip:   args.billing_address_zip,
+               address_country: args.billing_address_country
+             },
+             shipping: {
+               address_line1: args.shipping_address_line1,
+               address_city:  args.shipping_address_city,
+               address_state: args.shipping_address_state,
+               address_zip:   args.shipping_address_zip,
+               address_country: args.shipping_address_country
+             }
+
+            }, function(charge){
+              // charge - https://stripe.com/docs/api#charge_object
+
+              if (charge.paid) {
+                     window.location.href = '/confirmation/thanks/';
+                 }
+            }, function(error){
+              // error.status = "fail" || "error"
+              // error.errors = { property: [message], ... }
+              console.log(error);
+            });
+          }
+        });
+
+      $('.button').on('click', function(e) {
+
+    // Get ID name
+    var id = $(this).attr('id');
+    console.log('Button ID: ' + id);
+
+    // Find corresponding Quantity drop down and get value
+    var quantity = $('select[data-button=customButton1]').val();
+    console.log('Quantity: ' + quantity);
+
+    // Find corresponding Shirt size drop down and get value
+    var description = $('select[data-shirtSize=selectShirtSize]').val();
+    console.log('Description: ' + description);
+
+    // Grab custom data attributes
+    var price = $(this).attr('data-amount');
+    console.log('Price: ' + price);
+
+    //var description = $(this).attr('data-description');
+    //console.log('Description: ' + description);
+
+    // Stripe Checkout does not support quantity, so we will just multiply
+    // the amount by the value of quantity
+    var amount = price * quantity;
+    console.log('Total amount: ' + amount);
+
+
+          // Open Checkout with further options
+          handler.open({
+            image: '/img/checkout-logo.png',
+            name: '{{ page.prodtitle }}',
+            description: description,
+            amount: amount
+          });
+          e.preventDefault();
+        });
+
+        // Close Checkout on page navigation
+        $(window).on('popstate', function() {
+          handler.close();
+        });
+      });
+
+    </script>
+    <!-- stripe product end -->
+{% endif %}   
+    
+    </div>
+
+
+  
+  
+    </div>
+
+
+
+<!-- cross items begin -->
+<div class="cross-sell-container fullwidth">  
+<hr>
+<h3 class="title">You May Also Like:</h3>
+
+{% for product in site.products limit:1 %}
+{% for nestedproduct in product.relatedprodid limit:4 %}
+<div class="cross-sell col-sm-3">
+<br>
+<a href="{{ nestedproduct.rellink }}" title="{{ nestedproduct.prodtitle }}"><img src="{{ nestedproduct.relimg }}" alt="{{ nestedproduct.reltitle }}"></a>
+<div class="title"><a href="{{ nestedproduct.rellink }}" title="{{ nestedproduct.reltitle }}">{{ nestedproduct.reltitle }}</a></div>
+
+</div>
+{% endfor %}
+{% endfor %}
+
+
+</div>
+<!-- cross item end -->
+
+
+  </article>
+
+  {% if page.share %}
+    {% include addthis.html %}
+  {% endif %}
+
+  {% if page.comments %}
+     {% include disqus.html %}
+  {% endif %}
+
+</div>

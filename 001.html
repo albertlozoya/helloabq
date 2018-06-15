@@ -1,0 +1,208 @@
+---
+layout: page
+permalink: /t-shirt-001-burque-pride/
+title: Burque Pride Script T-shirt
+subtitle:
+exclude_from_nav: true
+masthead-img: false
+masthead-img-pat: false
+author: Albert
+date:   2016-02-12 12:00:01
+comments:
+share:
+---
+
+<div class="product-group">
+
+    <div class="product-left">
+        <img src="/img/t-shirt-001-burque.jpg" alt="" />
+    </div>
+
+
+    <div class="product-right">
+<p>Show every one your Burque pride by wearing this great  design printed on the front-side of a black 100% heavy cotton Gildan T-shirt. Available in adults sizes.
+
+<!-- stripe product begin -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script type="text/javascript" src="//checkout.stripe.com/checkout.js"></script>
+<div id="checkout" style="border: 1px #cccccc solid; margin: 10px; padding: 10px; text-align:left;">
+<a name="checkout"></a>
+<img src="/img/size-chart.jpg" align="right">
+<h3>$20.00</h3>
+
+
+<div style="padding-bottom: 15px;">
+Size:
+<select data-shirtSize="selectShirtSize" name="shirtSize">
+  <option value="Size: Small Black T-shirt">Small</option>
+  <option value="Size: Medium Black T-shirt">Medium</option>
+  <option value="Size: Large Black T-shirt">Large</option>
+  <option value="Size: X-Large Black T-shirt" selected>X-Large</option>
+</select>
+</div>
+
+<div style="padding-bottom: 15px;">
+Qty:
+<select data-button="customButton1" name="quantity">
+  <option value="1" selected>1</option>
+  <option value="2">2</option>
+  <option value="3">3</option>
+</select>
+</div>
+
+<div style="padding-bottom: 15px;">
+<button id="customButton1" class="button checkout-button btn btn-success" data-amount="2000" data-description="Burque! Pride T-shirt">Buy Now!</button>
+</div>
+
+
+</div>
+
+
+
+
+
+</p>
+
+
+
+
+
+<script>
+  bowtie.config.get(function(env){
+    if(!env.stripe.publishable_key){
+      console.error("Stripe not connected to this BowTie Project Environment");
+      return;
+    }
+
+    var handler = StripeCheckout.configure({
+      // Add your Stripe live publishable key here.
+      key: env.stripe.publishable_key,
+      image: 'https://stripe.com/img/documentation/checkout/marketplace.png',
+      locale: 'auto',
+	    shippingAddress: true,
+      token: function(token, args) {
+        // Use the token to create the charge with a server-side script.
+        // You can access the token ID with `token.id`
+        bowtie.user.purchase('product_1731ca9938', {
+          stripe_credit_card_token: token.id,
+          billing: {
+           name: args.billing_name,
+           address: {
+             line1: args.billing_address_line1,
+             city:  args.billing_address_city,
+             state: args.billing_address_state,
+             postal_code:   args.billing_address_zip,
+             country: args.billing_address_country
+           }
+         },
+         shipping: {
+           name: args.shipping_name,
+           address: {
+             line1: args.shipping_address_line1,
+             city:  args.shipping_address_city,
+             state: args.shipping_address_state,
+             postal_code:   args.shipping_address_zip,
+             country: args.shipping_address_country
+           }
+         }
+
+        }, function(charge){
+          // charge - https://stripe.com/docs/api#charge_object
+
+          if (charge.paid) {
+                 window.location.href = '/confirmation/thanks.html';
+             }
+        }, function(error){
+          // error.status = "fail" || "error"
+          // error.errors = { property: [message], ... }
+          console.log(error);
+        });
+      }
+    });
+
+  $('.button').on('click', function(e) {
+
+// Get ID name
+var id = $(this).attr('id');
+console.log('Button ID: ' + id);
+
+// Find corresponding Quantity drop down and get value
+var quantity = $('select[data-button=customButton1]').val();
+console.log('Quantity: ' + quantity);
+
+// Find corresponding Shirt size drop down and get value
+var description = $('select[data-shirtSize=selectShirtSize]').val();
+console.log('Description: ' + description);
+
+// Grab custom data attributes
+var price = $(this).attr('data-amount');
+console.log('Price: ' + price);
+
+//var description = $(this).attr('data-description');
+//console.log('Description: ' + description);
+
+// Stripe Checkout does not support quantity, so we will just multiply
+// the amount by the value of quantity
+var amount = price * quantity;
+console.log('Total amount: ' + amount);
+
+
+      // Open Checkout with further options
+      handler.open({
+        image: '/img/checkout-logo.png',
+        name: 'Burque Pride T-shirt',
+        description: description,
+        amount: amount
+      });
+      e.preventDefault();
+    });
+
+    // Close Checkout on page navigation
+    $(window).on('popstate', function() {
+      handler.close();
+    });
+  });
+
+</script>
+
+
+<!-- stripe product end -->
+</div>
+
+</div>
+
+
+
+<div class="cross-sell-container fullwidth">
+<hr>
+<h3 class="title">You May Also Like:</h3>
+
+<div class="cross-sell col-sm-3">
+<a href="/t-shirts/t-shirt-001-burque-pride/" title="ABQ T-shirt"><img src="/img/t-shirt-001-burque.jpg" alt="ABQ Tshirt"></a>
+<div class="title"><a href="/t-shirts/t-shirt-001-burque-pride/" title="ABQ T-shirt">ABQ T-shirt - $20</a></div>
+</div>
+
+
+<div class="cross-sell col-sm-3">
+<img src="/img/t-shirt-001-burque.jpg" alt="Burque! Tshirt">
+<div class="title">Burque! T-shirt</div>
+</div>
+
+
+<div class="cross-sell col-sm-3">
+<img src="/img/t-shirt-001-burque.jpg" alt="Albuquerque Tshirt">
+<div class="title">Albuquerque T-shirt</div>
+</div>
+
+
+<div class="cross-sell col-sm-3">
+<img src="/img/t-shirt-001-burque.jpg" alt="Burque! Tote">
+<div class="title">Burque! Tote</div>
+</div>
+
+
+
+
+
+
+</div>
